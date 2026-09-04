@@ -46,7 +46,7 @@ jobs:
 
     # Publish the Blazor WASM site
     - name: Publish Blazor Site
-      run: dotnet publish BlazorApp.csproj -c Release -o publish -p:GHPages=true
+      run: dotnet publish diamant-app.csproj -c Release -o publish -p:GHPages=true
 
     - name: Upload all published files
       uses: actions/upload-pages-artifact@v3
