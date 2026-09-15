@@ -11,8 +11,8 @@ public class ProblemFactory
 
         var two = new ProblemCategory(CategoryCode.AG6_1a, "Tvåans tabell");
         var four = new ProblemCategory(CategoryCode.AG6_1b, "Fyrans tabell");
-        var three = new ProblemCategory(CategoryCode.AG6_2a, "Trean tabell");
-        var five = new ProblemCategory(CategoryCode.AG6_3a, "Femman tabell");
+        var three = new ProblemCategory(CategoryCode.AG6_2a, "Treans tabell");
+        var five = new ProblemCategory(CategoryCode.AG6_3a, "Femmans tabell");
         var six = new ProblemCategory(CategoryCode.AG6_2b, "Sexans tabell");
         var high = new ProblemCategory(CategoryCode.AG6_3b, "Höga faktorer");
 

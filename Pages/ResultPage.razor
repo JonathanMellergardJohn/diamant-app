@@ -14,7 +14,7 @@
 </div>
 
 <div class="p-5">
-    <div class="border rounded-xl bg-gray-200/60">
+    <div class="border rounded-xl bg-gray-400/60">
         <div>
             <div class="flex flex-col justify-around items-center border-b-1 pb-5 bg-white rounded-t-xl">
                 <h2 class="text-3xl font-bold mb-3 mt-3">Resultat</h2>
@@ -22,7 +22,7 @@
                 @switch (result.ReturnGrade())
                 {
                     case 0:
-                        <div class="w-1/2 h-12 rounded-lg bg-lime-500">Perfekt
+                        <div class="w-1/2 h-12 rounded-lg bg-lime-500">
                         </div>
                         break;
                     case > 0 and <= 1:
@@ -61,7 +61,7 @@
             {
                 <div class="border rounded-lg mt-3 overflow-hidden">
                     <div
-                        class="bg-gray-400/60 flex justify-between items-center"
+                        class="bg-white flex justify-between items-center"
                         @onclick="() => ToggleGroup(group.Category.Code)"
                     >
                         <h3 class="ml-3 italic text-lg">@group.Category.Name</h3>
@@ -102,8 +102,8 @@
                         }
                     </div>
 
-                    <div class="grid transition-all duration-200 ease-in-out @(openGroups.Contains(group.Category.Code) ? "grid-rows-[1fr]" : "grid-rows-[0fr]")">
-                        <div class="overflow-hidden flex flex-col m-auto">
+                    <div class="bg-gray-200/60 grid transition-all duration-200 ease-in-out @(openGroups.Contains(group.Category.Code) ? "grid-rows-[1fr]" : "grid-rows-[0fr]")">
+                        <div class="overflow-hidden flex flex-col m-auto mt-4 mb-4">
                             @if (group.MistakeAndSlowCount() == 0)
                             {
                             <div class="p-3 italic">Alla rätt!</div>
