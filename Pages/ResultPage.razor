@@ -1,0 +1,182 @@
+@page "/result"
+@using Services;
+@using Models;
+@inject ProblemService problemService
+
+<div>
+    <div class="h-2 w-full bg-taupe-200"></div>
+    <div class="bg-gray-400/60 p-2 flex items-center">
+        <NavLink href="/">
+            <img class="h-18" src="diamant-icon.png"/>
+        </NavLink>
+        <h2 class="ml-4 text-2xl text-white">Multiplikationstabellen</h2>
+    </div>
+</div>
+
+<div class="p-5">
+    <div class="border rounded-xl bg-gray-200/60">
+        <div>
+            <div class="flex flex-col justify-around items-center border-b-1 pb-5 bg-white rounded-t-xl">
+                <h2 class="text-3xl font-bold mb-3 mt-3">Resultat</h2>
+
+                @switch (result.ReturnGrade())
+                {
+                    case 0:
+                        <div class="w-1/2 h-12 rounded-lg bg-lime-500">Perfekt
+                        </div>
+                        break;
+                    case > 0 and <= 1:
+                        <div class="w-1/2 h-12">
+                            <svg class="w-full h-full rounded-lg shadow-md" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <!-- Top-Left Half (Yellow) -->
+                                <polygon points="0,0 100,0 0,100" class="fill-yellow-400" />
+                                <!-- Bottom-Right Half (Lime) -->
+                                <polygon points="100,0 100,100 0,100" class="fill-lime-500" />
+                            </svg>
+                        </div>
+                        break;
+                    case > 1 and <= 2:
+                        <div class="w-1/2 h-12 rounded-lg bg-yellow-500">
+                        </div>
+                        break;
+                    case > 2 and <= 3:
+                        <div class="w-1/2 h-12">
+                            <svg class="w-full h-full rounded-lg shadow-md" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <!-- Top-Left Half (Yellow) -->
+                                <polygon points="0,0 100,0 0,100" class="fill-yellow-400" />
+                                <!-- Bottom-Right Half (Lime) -->
+                                <polygon points="100,0 100,100 0,100" class="fill-red-500" />
+                            </svg>
+                        </div>
+                        break;
+                    case > 3:
+                        <div class="w-1/2 h-12 rounded-lg bg-red-500">
+                        </div>
+                        break;
+                }
+            </div>
+            <div class="m-4">
+                <div class="text-sm italic">Klicka nedan för att se missade uppgifter</div>
+            @foreach (var group in result.GroupedProblems)
+            {
+                <div class="border rounded-lg mt-3 overflow-hidden">
+                    <div
+                        class="bg-gray-400/60 flex justify-between items-center"
+                        @onclick="() => ToggleGroup(group.Category.Code)"
+                    >
+                        <h3 class="ml-3 italic text-lg">@group.Category.Name</h3>
+                        @switch (group.ReturnGrade())
+                        {
+                            case 0:
+                                <div class="w-1/4 h-8 rounded-lg bg-lime-500 m-2">
+                                </div>
+                                break;
+                            case 1:
+                                <div class="w-1/4 h-8 m-2">
+                                    <svg class="w-full h-full rounded-lg shadow-md" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                        <!-- Top-Left Half (Yellow) -->
+                                        <polygon points="0,0 100,0 0,100" class="fill-yellow-400" />
+                                        <!-- Bottom-Right Half (Lime) -->
+                                        <polygon points="100,0 100,100 0,100" class="fill-lime-500" />
+                                    </svg>
+                                </div>
+                                break;
+                            case 2:
+                                <div class="w-1/4 h-8 rounded-lg bg-yellow-500 m-2">
+                                </div>
+                                break;
+                            case 3:
+                                <div class="w-1/4 h-8 m-2">
+                                    <svg class="w-full h-full rounded-lg shadow-md" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                        <!-- Top-Left Half (Yellow) -->
+                                        <polygon points="0,0 100,0 0,100" class="fill-yellow-400" />
+                                        <!-- Bottom-Right Half (Lime) -->
+                                        <polygon points="100,0 100,100 0,100" class="fill-red-500" />
+                                    </svg>
+                                </div>
+                                break;
+                            case 4:
+                                <div class="w-1/4 h-8 rounded-lg bg-red-500 m-2">
+                                </div>
+                                break;
+                        }
+                    </div>
+
+                    <div class="grid transition-all duration-200 ease-in-out @(openGroups.Contains(group.Category.Code) ? "grid-rows-[1fr]" : "grid-rows-[0fr]")">
+                        <div class="overflow-hidden flex flex-col m-auto">
+                            @if (group.MistakeAndSlowCount() == 0)
+                            {
+                            <div class="p-3 italic">Alla rätt!</div>
+                            }
+                            @foreach (var problem in group.Problems)
+                            {
+                                if (!problem.UserIsCorrect())
+                                {
+                                    <div class="flex items-center">
+                                        <div class="bg-red-300 mt-1 mb-1 p-2 rounded-md">
+                                            <div>
+                                                <span>@problem.ExpressionToString()</span>
+                                                <span> = </span>
+                                                <span class="relative inline-flex items-center justify-center min-w-[24px] h-6 px-1">
+                                                    <!-- The Answer Text -->
+                                                    <span class="relative z-0 font-bold"">@problem.UserAnswerToString()</span>
+                                                    <svg class="absolute z-10 w-6 h-6 fill-red-600 pointer-events-none opacity-80" viewBox="0 0 640 640">
+                                                        <path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z"/>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4 bg-lime-500 pl-1.5 pr-1.5 rounded-md">@problem.Expression.Evaluate()</div>
+                                    </div>
+
+                                }
+                                else if (problem.TimeToCapQuot() > 1)
+                                {
+                                    <div class="bg-yellow-500 mt-1 mb-1 p-2 rounded-md flex justify-between items-center">
+                                        <div>
+                                            <span>@problem.ExpressionToString()</span>
+                                            <span> = </span>
+                                            <span>@problem.UserAnswer</span>
+                                        </div>
+                                        <img class="inline h-[1em] ml-2" src="alarm-clock-regular-full.svg"/>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code
+{
+    private Result result;
+    private HashSet<CategoryCode> openGroups;
+
+    protected override void OnInitialized()
+    {
+        result = new Result("Multiplikationstabellen", problemService.Problems);
+        openGroups = new HashSet<CategoryCode>();
+    }
+
+    private void ToggleGroup(CategoryCode code)
+    {
+        if (openGroups.Contains(code))
+        {
+            openGroups.Remove(code);
+        }
+        else
+        {
+            openGroups.Add(code);
+        }
+        Console.WriteLine("In set openGroups: ");
+        foreach (var group in openGroups)
+        {
+            Console.WriteLine(group);
+        }
+    }
+}

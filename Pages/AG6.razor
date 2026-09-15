@@ -1,0 +1,134 @@
+﻿@page "/ag6"
+@inject NavigationManager NavigationManager;
+@using Models;
+@using Services;
+@inject ProblemService problemService;
+
+<PageTitle>Multiplikationstabellen</PageTitle>
+
+<div>
+    <div class="h-2 w-full bg-taupe-200"></div>
+    <div class="bg-emerald-500/80 p-2 flex items-center">
+        <NavLink href="/">
+            <img class="h-18" src="diamant-icon.png"/>
+        </NavLink>
+        <h2 class="ml-4 text-2xl text-white">Multiplikationstabellen</h2>
+    </div>
+</div>
+
+<section class="h-full flex flex-col justify-between items-center">
+	@if (!hasStarted)
+	{
+    <button
+    	@onclick="StartApplication"
+        class="bg-emerald-500/80 text-3xl border border-emerald-500/80 p-3 rounded-md mt-36">
+        starta
+    </button>
+    }
+    else
+    {
+    <div class="text-5xl mt-20">
+    	<span>@problems[currentIndex].ExpressionToString()</span>
+       	<span> = </span>
+        <input
+        	@ref="inputField"
+        	class="w-20 pl-2 pr-2 pl-2 pt-1 pb-2"
+        	autofocus
+         	type="number"
+         	@bind="currentAnswerInput"
+            @bind:event="oninput"
+            @onkeydown="HandleKeyDown">
+    </div>
+    <div class="bg-gray-100 p-4 w-full mx-auto">
+        <div class="grid grid-cols-3 gap-2">
+            <button @onclick="() => HandleNumpadClick(1)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">1</button>
+            <button @onclick="() => HandleNumpadClick(2)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">2</button>
+            <button @onclick="() => HandleNumpadClick(3)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">3</button>
+            <button @onclick="() => HandleNumpadClick(4)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">4</button>
+            <button @onclick="() => HandleNumpadClick(5)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">5</button>
+            <button @onclick="() => HandleNumpadClick(6)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">6</button>
+            <button @onclick="() => HandleNumpadClick(7)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">7</button>
+            <button @onclick="() => HandleNumpadClick(8)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">8</button>
+            <button @onclick="() => HandleNumpadClick(9)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">9</button>
+            <!-- The '0' button -->
+            <button @onclick="() => HandleNumpadClick(null)" type="button" class="bg-red-300 text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Radera</button>
+            <button @onclick="() => HandleNumpadClick(0)" type="button" class="bg-white text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">0</button>
+            <button
+            	type="button"
+             	class="bg-emerald-500/80 text-gray-800 text-xl font-semibold py-4 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              	@onclick="SubmitAnswer"
+            >
+                Svara
+            </button>
+        </div>
+
+    </div>
+    }
+</section>
+
+@code {
+
+	// variables
+	private ElementReference inputField;
+	private List<Problem> problems = new List<Problem>();
+	private DateTime problemStartTime;
+	private bool hasStarted = false;
+	private int currentIndex = 0;
+	private int? currentAnswerInput;
+
+	// flow control methods
+ 	protected override void OnInitialized()
+    {
+        problems = ProblemFactory.CreateAG6Full();
+    }
+
+	private async Task StartApplication()
+	{
+		problemStartTime = DateTime.Now;
+		hasStarted = true;
+		await Task.Delay(1);
+		await inputField.FocusAsync();
+	}
+	private async Task SubmitAnswer()
+	{
+		problems[currentIndex].UserTime = DateTime.Now - problemStartTime;
+		problemStartTime = DateTime.Now;
+		problems[currentIndex].UserAnswer = currentAnswerInput.ToString();
+
+		if (problems.Count > currentIndex + 1)
+		{
+			currentIndex++;
+			currentAnswerInput = null;
+			await inputField.FocusAsync();
+	 	}
+		else
+		{
+		    problemService.Problems = problems;
+			NavigationManager.NavigateTo("/result");
+		}
+	}
+
+	// helper methods
+
+    private void HandleNumpadClick(int? number)
+    {
+    	if (currentAnswerInput == null)
+     	{
+      		currentAnswerInput = number;
+      	}
+       	else
+        {
+        	currentAnswerInput = (currentAnswerInput * 10) + number;
+        }
+
+    }
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+{
+    if (e.Key == "Enter")
+    {
+        await SubmitAnswer();
+    }
+}
+
+
+}

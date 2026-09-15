@@ -1,7 +1,25 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Diagnoser</PageTitle>
+<div>
+    <div class="h-4"></div>
+    <div class="h-2 w-full bg-taupe-200"></div>
+    <div class="bg-gray-400/60 p-2 flex items-center">
+        <NavLink href="/">
+            <img class="h-18" src="diamant-icon.png"/>
+        </NavLink>
+        <h2 class="ml-10 text-2xl text-white">Diagnoser</h2>
+    </div>
+</div>
 
-<h1>Hello, world! This will soon be a math diagnostics tool!</h1>
+<section class="h-full flex justify-center items-center">
+    <div class="bg-emerald-500/80 p-5 border border-teal-500 rounded-md">
+        <NavLink class="text-xl" href="AG6">
+            Multiplikationstabellen
+        </NavLink>
+    </div>
+</section>
 
-Welcome to your new app.
+@code {
+
+}
