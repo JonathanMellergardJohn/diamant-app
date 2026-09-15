@@ -19,7 +19,7 @@ public class Result : IResult
 
             foreach (var category in problem.ProblemCategories)
             {
-                var existingGroup = GroupedProblems.Find(g => g.Category == category);
+                var existingGroup = GroupedProblems.Find(g => g.Category.Code == category.Code);
 
                 if (existingGroup == null)
                 {

@@ -103,7 +103,7 @@
                     </div>
 
                     <div class="bg-gray-200/60 grid transition-all duration-200 ease-in-out @(openGroups.Contains(group.Category.Code) ? "grid-rows-[1fr]" : "grid-rows-[0fr]")">
-                        <div class="overflow-hidden flex flex-col m-auto mt-4 mb-4">
+                        <div class="overflow-hidden flex flex-col m-auto">
                             @if (group.MistakeAndSlowCount() == 0)
                             {
                             <div class="p-3 italic">Alla rätt!</div>
